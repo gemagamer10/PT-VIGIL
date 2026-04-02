@@ -22,3 +22,4 @@ displays national average risk and filtered average risk,
 offers detail view with contract flags and score breakdown.
 Note: this is a risk analysis tool, not a proof of corruption. It highlights suspicious procurement patterns for further review.
 
+ALL DATA IS PUBLIC AND ON dados.gov.pt
