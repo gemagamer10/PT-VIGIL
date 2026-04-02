@@ -59,3 +59,5 @@ It flags suspicious procurement patterns such as direct award, high value, price
 THE DATABASE IS THE export_completo.json BUT I RECOMMEND IT WHENEVER I USE TO UPDATE THE DATABASE WITH SCRIPT pt_vigil_pipeline.py
 
 ALL DATA IS PUBLIC AND ON dados.gov.pt
+
+DON'T TRUST 100% NO CODE
