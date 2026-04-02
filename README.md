@@ -22,4 +22,6 @@ displays national average risk and filtered average risk,
 offers detail view with contract flags and score breakdown.
 Note: this is a risk analysis tool, not a proof of corruption. It highlights suspicious procurement patterns for further review.
 
+THE DATABASE IS THE export_completo.json BUT I RECOMMEND IT WHENEVER I USE TO UPDATE THE DATABASE WITH SCRIPT pt_vigil_pipeline.py
+
 ALL DATA IS PUBLIC AND ON dados.gov.pt
