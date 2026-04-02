@@ -1,0 +1,236 @@
+══════════════════════════════════════════════════════════════════════
+PT-VIGIL — RELATÓRIO DE RISCO NOS CONTRATOS PÚBLICOS PORTUGUESES
+Gerado : 2026-04-02 01:37
+Fonte  : dados.gov.pt — IMPIC / Portal Base (domínio público)
+══════════════════════════════════════════════════════════════════════
+
+RESUMO GLOBAL
+──────────────────────────────────────────────────
+  Total de contratos    :      619,944
+  Valor total           :      53.45 mil M€
+  Score médio de risco  :       20.4 / 100
+  ⚠  Alto risco (≥60)   :          192 contratos
+  ⚡ Risco médio (35-59) :       23,905 contratos
+  ✓  Baixo risco (<35)  :      595,847 contratos
+  Por ajuste direto     :      305,081  (7.94 mil M€)
+
+DISTRIBUIÇÃO POR ANO
+──────────────────────────────────────────────────
+  2025  231,118 contratos    22.89 mil M€  score médio 20.1
+  2024  216,849 contratos    17.74 mil M€  score médio 20.9
+  2022  171,977 contratos    12.83 mil M€  score médio 20.3
+
+TOP 25 CONTRATOS ALTO RISCO
+──────────────────────────────────────────────────────────────────────
+  [ 68.0] EAD20240049 - AQUISIÇÃO DE ANTI - HEMORRÁGICOS - NONACOG
+         ▸ 511228848 - Serviço de Saúde da Reg → 500162166 - Laboratório Pfizer, Lda
+         ▸      759,942€  |  2024  |  ajuste direto, valor muito elevado (759,942€), desvio preço 68%, adjudicações repetidas (279x)
+
+  [ 68.0] Serviços de higiene e limpeza - Região Centro
+         ▸ 501442600 - Instituto do Emprego e  → 509418627 - Fine Facility Services,
+         ▸      572,976€  |  2024  |  ajuste direto, valor muito elevado (572,976€), desvio preço 85%, adjudicações repetidas (274x)
+
+  [ 68.0] Fornecimento de Trastuzumab Emtansina ao Hospital de Santo Esp
+         ▸ 512105030 - HOSPITAL DE SANTO ESPÍR → 500233810 - ROCHE FARMACÊUTICA QUIM
+         ▸      730,650€  |  2024  |  ajuste direto, valor muito elevado (730,650€), desvio preço 77%, adjudicações repetidas (1057x)
+
+  [ 68.0] Fornecimento de Pertuzumab e Trastuzumab ao Hospital de Santo 
+         ▸ 512105030 - Hospital de Santo Espír → 500233810 - ROCHE FARMACÊUTICA QUIM
+         ▸      581,846€  |  2024  |  ajuste direto, valor muito elevado (581,846€), desvio preço 50%, adjudicações repetidas (1057x)
+
+  [ 68.0] Aquisição de serviços de cantinas escolares para os estabeleci
+         ▸ 501306099 - Município do Porto → 500347506 - EUREST (PORTUGAL)-SOCIE
+         ▸      901,662€  |  2024  |  ajuste direto, valor muito elevado (901,662€), desvio preço 33%, adjudicações repetidas (19x)
+
+  [ 68.0] Fornecimento de Nivolumab e Ipilimumab ao HSEIT, EPER
+         ▸ 512105030 - HOSPITAL DE SANTO ESPÍR → 500048193 - BRISTOL-MYERS SQUIBB FA
+         ▸      612,876€  |  2024  |  ajuste direto, valor muito elevado (612,876€), desvio preço 68%, adjudicações repetidas (135x)
+
+  [ 68.0] MEDICAMENTOS EXCLUSIVOS - LABORATÓRIOS PFIZER
+         ▸ 510103448 - Centro Hospitalar e Uni → 500162166 - Laboratórios Pfizer, Ld
+         ▸      539,827€  |  2022  |  ajuste direto, valor muito elevado (539,827€), desvio preço 37%, adjudicações repetidas (245x)
+
+  [ 68.0] Aquisição de Reagentes para PCR com colocação de equipamentos 
+         ▸ 508094461 - Unidade Local de Saúde  → 502380543 - Bioportugal
+         ▸      660,000€  |  2022  |  ajuste direto, valor muito elevado (660,000€), desvio preço 60%, adjudicações repetidas (284x)
+
+  [ 68.0] Serviço de realização de testes rápidos de antigénio na área d
+         ▸ 600086020 - Direção-Geral dos Estab → 508720311 - Centro Medicina Laborat
+         ▸      685,700€  |  2022  |  ajuste direto, valor muito elevado (685,700€), desvio preço 31%, adjudicações repetidas (23x)
+
+  [ 68.0] Aquisição de Seguro de Responsabilidade Civil para os Contabil
+         ▸ 503692310 - Ordem dos Contabilistas → 502358416 - Verlingue - Corretor de
+         ▸      730,000€  |  2022  |  ajuste direto, valor muito elevado (730,000€), desvio preço 100%, adjudicações repetidas (16x)
+
+  [ 68.0] Fornecimento de Energia Elétrica a Instalações do Município de
+         ▸ 500051070 - Município de Lisboa → 502124083 - Iberdrola Clientes Port
+         ▸    1,176,051€  |  2022  |  ajuste direto, valor muito elevado (1,176,051€), desvio preço 55%, adjudicações repetidas (113x)
+
+  [ 68.0] Fornecimento de Energia em Baixa Tensão Normal
+         ▸ 502834846 - Município do Montijo → 500697370 - Petrogal, S.A.
+         ▸      696,000€  |  2022  |  ajuste direto, valor muito elevado (696,000€), desvio preço 48%, adjudicações repetidas (729x)
+
+  [ 68.0] Aquisição de serviços para exploração do serviço público de tr
+         ▸ 508779472 - Comunidade Intermunicip → 500036365 - Transdev Norte, S.A.
+         ▸      700,940€  |  2022  |  ajuste direto, valor muito elevado (700,940€), desvio preço 35%, adjudicações repetidas (24x)
+
+  [ 68.0] Aquisição de Serviços de Higiene e Limpeza, no âmbito do COVID
+         ▸ 503135593 - Administração Regional  → 502611057 - Interlimpe - Facility s
+         ▸      535,097€  |  2022  |  ajuste direto, valor muito elevado (535,097€), desvio preço 70%, adjudicações repetidas (363x)
+
+  [ 68.0] Prestação de Serviços de Programa de Diálise Peritoneal
+         ▸ 511228848 - Serviço de Saúde da Reg → 503347345 - BAXTER MEDICO FARMACEUT
+         ▸      570,714€  |  2022  |  ajuste direto, valor muito elevado (570,714€), desvio preço 39%, adjudicações repetidas (93x)
+
+  [ 68.0] NP EXCL DAIICHI SANKYO PORTUGAL- TRASTUZUMAB DERUXTECANO
+         ▸ 506361438 - Instituto Português de  → 501509860 - DAIICHI SANKYO PORTUGAL
+         ▸      960,000€  |  2022  |  ajuste direto, valor muito elevado (960,000€), desvio preço 64%, adjudicações repetidas (64x)
+
+  [ 68.0] Fornecimento de Pembrolizumab ao HSEIT, EPER
+         ▸ 512105030 - Hospital de Santo Espír → 500191360 - MERCK SHARP DOHME
+         ▸      504,000€  |  2022  |  ajuste direto, valor muito elevado (504,000€), desvio preço 31%, adjudicações repetidas (569x)
+
+  [ 68.0] Serviço de realização de testes rápidos de antigénio na área d
+         ▸ 600086020 - Direção-Geral dos Estab → 500753296 - MEDICINA LABORATORIAL -
+         ▸      711,200€  |  2022  |  ajuste direto, valor muito elevado (711,200€), desvio preço 32%, adjudicações repetidas (24x)
+
+  [ 68.0] Serviço de realização de testes rápidos de antigénio na área d
+         ▸ 600086020 - Direção-Geral dos Estab → 500065012 - SYNLABHEALTH II, S.A.
+         ▸      580,500€  |  2022  |  ajuste direto, valor muito elevado (580,500€), desvio preço 33%, adjudicações repetidas (14x)
+
+  [ 68.0] 95 COVID19 - AQUIS.TESTES RAPIDOS SARS COV-2 E GRIPE A
+         ▸ 510103448 - Centro Hospitalar e Uni → 504282921 - ROCHE SISTEMA DE DIAGNO
+         ▸    1,212,640€  |  2022  |  ajuste direto, valor muito elevado (1,212,640€), desvio preço 33%, adjudicações repetidas (495x)
+
+  [ 68.0] 4590009/2022 ELECTRICIDADE P MESES NOVEMBRO E DEZEMBRO 2022
+         ▸ 509186998 - Centro Hospitalar Barre → 500697370 - PETROGAL, S.A.
+         ▸      560,000€  |  2022  |  ajuste direto, valor muito elevado (560,000€), desvio preço 43%, adjudicações repetidas (513x)
+
+  [ 68.0] Aquisição de serviços à SIEMENS para a reparação de equipament
+         ▸ 500498601 - CP - Comboios de Portug → 514750901 - Siemens Mobility Unipes
+         ▸      532,563€  |  2022  |  ajuste direto, valor muito elevado (532,563€), desvio preço 33%, adjudicações repetidas (12x)
+
+  [ 68.0] Serviços de banco de apoio associado ao Multibanco Serviço Nor
+         ▸ 500715505 - Instituto de Gestão Fin → 500077568 - CTT CORREIOS DE PORTUGA
+         ▸      564,225€  |  2025  |  ajuste direto, valor muito elevado (564,225€), desvio preço 35%, adjudicações repetidas (114x)
+
+  [ 68.0] Ajuste direto para aquisição de T1823 - TRASTUZUMAB DERUXTECAN
+         ▸ 509186998 - Unidade Local de Saúde  → 501509860 - DAIICHI SANKYO PORTUGAL
+         ▸    1,016,000€  |  2025  |  ajuste direto, valor muito elevado (1,016,000€), desvio preço 75%, adjudicações repetidas (183x)
+
+  [ 63.0] aquisição de teste sarscov2
+         ▸ 508142156 - Centro Hospitalar Vila  → - - CEPHEID IBERIA, S.L.U. (SUCURSA
+         ▸      854,335€  |  2022  |  ajuste direto simplificado, valor muito elevado (854,335€), adjudicações repetidas (270x)
+
+TOP 20 ADJUDICATÁRIAS POR RISCO MÉDIO
+──────────────────────────────────────────────────────────────────────
+  [ 53.0]  500246505 - Servilimpe - Limpezas Técnicas Mecanizadas,
+           1 contratos  |  2.1 M€  |  100% ajuste direto
+
+  [ 53.0]  504615947 - Meo - Serviços Comunicações e Multimédia, S
+           1 contratos  |  0.8 M€  |  100% ajuste direto
+
+  [ 53.0]  506134466 - Instituto de Medicina Molecular
+           1 contratos  |  0.9 M€  |  100% ajuste direto
+
+  [ 53.0]  507855841 - CERELINEX - CONSULTORES DE ENGENHARIA, UNIP
+           1 contratos  |  0.9 M€  |  100% ajuste direto
+
+  [ 50.7]  - - BMC Software Distribuition, BV
+           12 contratos  |  5.0 M€  |  100% ajuste direto
+
+  [ 50.2]  514750901 - Siemens Mobility Unipessoal, Lda.
+           12 contratos  |  43.7 M€  |  83% ajuste direto
+
+  [ 50.0]  513481613 - VERTEX PHARMACEUTICALS (PORTUGAL), UNIPESSO
+           34 contratos  |  33.5 M€  |  100% ajuste direto
+
+  [ 49.7]  502334967 - Farminveste - Investimentos, Participações 
+           6 contratos  |  14.6 M€  |  100% ajuste direto
+
+  [ 49.1]  513481613 - VERTEX PHARMACEUTICALS (PORTUGAL), UNIPESSO
+           81 contratos  |  83.2 M€  |  99% ajuste direto
+
+  [ 47.0]  - - Pérez Llorca, Abogados, S.L.P. y Cía
+           1 contratos  |  0.6 M€  |  100% ajuste direto
+
+  [ 47.0]  504615947 - CONSÓRCIO MEO/SYNCHRO
+           1 contratos  |  0.6 M€  |  100% ajuste direto
+
+  [ 47.0]  512024979 - Centro de Medicina Laboratorial Germano de 
+           1 contratos  |  0.7 M€  |  100% ajuste direto
+
+  [ 46.2]  514799633 - Alnypt, Sociedade Unipessoal, Lda.
+           44 contratos  |  182.9 M€  |  61% ajuste direto
+
+  [ 45.6]  - - Varian Medical Systems Ibérica, S.L.
+           7 contratos  |  4.6 M€  |  100% ajuste direto
+
+  [ 45.5]  514750901 - SIEMENS MOBILITY, UNIPESSOAL, LDA.
+           11 contratos  |  12.9 M€  |  82% ajuste direto
+
+  [ 45.3]  514194880 - KYOWA KIRINFARMACEUTICA UNIP. LDA
+           16 contratos  |  3.3 M€  |  100% ajuste direto
+
+  [ 45.2]  980553768 - ALEXION PHARMA SPAIN S L - SUCURSAL PORTUGA
+           82 contratos  |  34.6 M€  |  98% ajuste direto
+
+  [ 45.0]  - - António Ribeiro Amado
+           1 contratos  |  0.1 M€  |  100% ajuste direto
+
+  [ 45.0]  - - GEM-MATTHEWS INTERNATIONAL SRL
+           1 contratos  |  0.1 M€  |  100% ajuste direto
+
+  [ 45.0]  - - Hélio Jorge Ferreira dos Anjos
+           1 contratos  |  0.2 M€  |  100% ajuste direto
+
+TOP 15 ENTIDADES PÚBLICAS — MAIOR % AJUSTE DIRETO (≥5 contratos)
+──────────────────────────────────────────────────────────────────────
+  100.0%  500793263 - Academia de Música de Viana do Castelo - Co
+         9 contratos  |  0.1 M€  |  score 21.0
+
+  100.0%  500918449 - Cáritas Diocesana de Beja
+         12 contratos  |  0.1 M€  |  score 23.2
+
+  100.0%  500919925 - Associação da Casa do Povo de Alvaiázere
+         6 contratos  |  0.1 M€  |  score 20.5
+
+  100.0%  500997519 - Companhia de Teatro de Almada C. R. L.
+         30 contratos  |  0.3 M€  |  score 22.1
+
+  100.0%  501073051 - Centro Comunitário Bento XVI
+         5 contratos  |  0.1 M€  |  score 24.0
+
+  100.0%  501080236 - SEIES - Sociedade de Estudos e Intervenção 
+         9 contratos  |  0.1 M€  |  score 21.3
+
+  100.0%  501090711 - Freguesia de Freixieiro de Soutelo
+         6 contratos  |  0.0 M€  |  score 19.3
+
+  100.0%  501094768 - Freguesia de Santa Catarina da Fonte do Bis
+         7 contratos  |  0.1 M€  |  score 27.6
+
+  100.0%  501135774 - Sociedade Artística Musical dos Pousos
+         33 contratos  |  0.2 M€  |  score 21.9
+
+  100.0%  501137157 - Freguesia de Cabeção
+         5 contratos  |  0.0 M€  |  score 22.6
+
+  100.0%  501227300 - Santa Casa da Misericórdia de Vila Nova da 
+         6 contratos  |  0.0 M€  |  score 23.2
+
+  100.0%  501228349 - Freguesia de Vila Nova do Ceira
+         9 contratos  |  0.1 M€  |  score 18.0
+
+  100.0%  501296930 - Freguesia de Vimieiro
+         8 contratos  |  0.1 M€  |  score 21.8
+
+  100.0%  501328106 - Centro Cultural de Amarante
+         37 contratos  |  0.2 M€  |  score 20.5
+
+  100.0%  501378510 - Associação de Solidariedade Social do Alto 
+         11 contratos  |  0.0 M€  |  score 18.0
+
+══════════════════════════════════════════════════════════════════════
+FIM DO RELATÓRIO — PT-VIGIL v3
+══════════════════════════════════════════════════════════════════════

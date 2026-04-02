@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT-VIGIL — Contratos Públicos (Dados Reais)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0b0b0f;
+  --surface:#13131a;
+  --surface2:#1c1c26;
+  --border:#252535;
+  --text:#e2e2ee;
+  --muted:#7a7a90;
+  --dim:#44445a;
+  --accent:#5585f0;
+  --alto:#e24b4a;
+  --medio:#ef9f27;
+  --baixo:#5aab38;
+  --font-mono:'IBM Plex Mono',monospace;
+  --font-ui:'IBM Plex Sans Condensed',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);min-height:100vh;font-size:14px;line-height:1.5;}
+::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── HEADER ── */
+header{
+  display:flex;flex-wrap:wrap;align-items:flex-start;gap:1rem;
+  padding:1rem 1.5rem;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.logo{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:.12em;white-space:nowrap;}
+.logo em{color:var(--alto);font-style:normal;}
+.search-wrap{flex:1;max-width:420px;position:relative;display:grid;gap:6px;}
+.search-wrap input{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;
+  padding:6px 10px 6px 32px;color:var(--text);font-family:var(--font-mono);font-size:11px;outline:none;
+}
+.filter-wrap input{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;
+  padding:6px 10px;color:var(--text);font-family:var(--font-mono);font-size:11px;outline:none;
+}
+.sidebar-input{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;
+  padding:8px 10px;color:var(--text);font-family:var(--font-mono);font-size:11px;outline:none;
+}
+.sidebar-input:focus{border-color:var(--accent);}
+.search-wrap input:focus{border-color:var(--accent);}
+.search-wrap input::placeholder{color:var(--dim);}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:13px;pointer-events:none;}
+.hstats{display:flex;gap:1.5rem;margin-left:auto;}
+.hstat{font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.hstat b{color:var(--text);font-weight:500;}
+.hstat-badge{
+  font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;
+  background:rgba(226,75,74,.15);color:#f08888;border:1px solid rgba(226,75,74,.25);
+  cursor:default;
+}
+.hbtn{
+  font-family:var(--font-mono);font-size:10px;padding:3px 10px;border-radius:3px;cursor:pointer;
+  background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  transition:all .12s;white-space:nowrap;
+}
+.hbtn:hover{border-color:var(--accent);color:var(--accent);}
+.hbtn.active{background:rgba(85,133,240,.12);border-color:var(--accent);color:var(--accent);}
+
+/* ── LOADER BAR ── */
+#loader-bar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 1.5rem;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:10px;
+}
+#loader-bar .helper-note{
+  font-size:11px;color:var(--muted);padding:8px 12px;border:1px solid rgba(85,133,240,.12);border-radius:6px;background:rgba(85,133,240,.05);flex:1;min-width:240px;
+}
+.sidebar-select{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px 10px;outline:none;margin-top:6px;
+}
+.sidebar-select:focus{border-color:var(--accent);}
+.lb-label{color:var(--dim);margin-right:4px;}
+.lb-sep{color:var(--border);margin:0 4px;}
+#status-msg{color:var(--dim);margin-left:auto;transition:color .3s;}
+#status-msg.ok{color:var(--baixo);}
+#status-msg.err{color:var(--alto);}
+#status-msg.loading{color:var(--accent);}
+.live-wrap{display:flex;gap:5px;align-items:center;}
+.live-wrap input{
+  background:var(--bg);border:1px solid var(--border);border-radius:4px;
+  padding:3px 8px;color:var(--text);font-family:var(--font-mono);font-size:10px;outline:none;
+  width:220px;
+}
+.live-wrap input:focus{border-color:var(--accent);}
+.live-wrap input::placeholder{color:var(--dim);}
+.lbtn{
+  font-family:var(--font-mono);font-size:9px;padding:3px 9px;border-radius:3px;cursor:pointer;
+  background:transparent;border:1px solid var(--border);color:var(--muted);transition:all .12s;
+}
+.lbtn:hover{border-color:var(--accent);color:var(--accent);}
+.lbtn.primary{background:rgba(85,133,240,.12);border-color:var(--accent);color:var(--accent);}
+
+/* ── CORS HELP ── */
+#cors-help{
+  display:none;background:var(--surface);border:1px solid rgba(226,75,74,.3);
+  border-radius:6px;padding:1rem 1.5rem;margin:1rem 1.5rem;
+  font-family:var(--font-mono);font-size:11px;color:var(--muted);
+}
+#cors-help b{color:var(--text);}
+#cors-help code{color:var(--accent);background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:10px;}
+#cors-help .close-help{float:right;cursor:pointer;color:var(--dim);}
+#cors-help .close-help:hover{color:var(--text);}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 52px - 41px);}
+
+/* ── SIDEBAR ── */
+aside{border-right:1px solid var(--border);padding:1.25rem 1rem;overflow-y:auto;}
+.fg{margin-bottom:1.25rem;}
+.fg-title{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.5rem;padding-left:6px;
+}
+.fo{
+  display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:4px;
+  cursor:pointer;font-size:12px;color:var(--muted);transition:all .12s;
+}
+.fo:hover{background:var(--surface2);color:var(--text);}
+.fo.active{color:var(--text);background:var(--surface);}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fcount{margin-left:auto;font-family:var(--font-mono);font-size:9px;color:var(--dim);}
+.source-item{
+  display:flex;align-items:center;gap:6px;padding:3px 6px;
+  font-size:11px;color:var(--dim);
+}
+.src-dot{width:5px;height:5px;border-radius:1px;background:var(--border);flex-shrink:0;}
+.src-active .src-dot{background:var(--accent);}
+.src-active{color:var(--muted);}
+
+/* ── MAIN ── */
+main{padding:1.25rem 1.5rem;overflow-y:auto;}
+.main-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.result-info{font-size:12px;color:var(--muted);}
+.sort-sel{
+  background:var(--surface);border:1px solid var(--border);border-radius:4px;
+  padding:4px 8px;color:var(--muted);font-family:var(--font-mono);font-size:10px;cursor:pointer;outline:none;
+}
+
+/* ── GRID ── */
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;}
+
+/* ── CARD ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:7px;
+  padding:.9rem 1rem;cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color .15s,transform .1s;
+}
+.card:hover{border-color:#353548;transform:translateY(-1px);}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:7px 0 0 7px;}
+.card.alto::before{background:var(--alto);}
+.card.medio::before{background:var(--medio);}
+.card.baixo::before{background:var(--baixo);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem;}
+.pol-name{font-size:13.5px;font-weight:600;line-height:1.3;color:var(--text);}
+.pol-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.risk-score{font-family:var(--font-mono);font-size:22px;font-weight:500;line-height:1;text-align:right;}
+.risk-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;text-align:right;margin-top:1px;}
+.score.alto{color:var(--alto);} .score.medio{color:var(--medio);} .score.baixo{color:var(--baixo);}
+.lbl.alto{color:var(--alto);} .lbl.medio{color:var(--medio);} .lbl.baixo{color:var(--baixo);}
+.rbar{height:2px;background:var(--surface2);border-radius:1px;margin-bottom:.7rem;overflow:hidden;}
+.rbar-fill{height:100%;border-radius:1px;}
+.rbar-fill.alto{background:var(--alto);} .rbar-fill.medio{background:var(--medio);} .rbar-fill.baixo{background:var(--baixo);}
+.cstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.cs{background:var(--surface2);border-radius:4px;padding:4px 6px;}
+.cs-l{font-family:var(--font-mono);font-size:8px;color:var(--dim);letter-spacing:.06em;margin-bottom:1px;}
+.cs-v{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--text);}
+.tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:.55rem;}
+.tag{font-family:var(--font-mono);font-size:8px;padding:2px 5px;border-radius:2px;letter-spacing:.03em;}
+.tag.alto{background:rgba(226,75,74,.13);color:#f08080;border:1px solid rgba(226,75,74,.22);}
+.tag.medio{background:rgba(239,159,39,.13);color:#f0b870;border:1px solid rgba(239,159,39,.22);}
+.no-r{grid-column:1/-1;text-align:center;padding:3rem;color:var(--dim);font-family:var(--font-mono);font-size:11px;}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:4rem 2rem;
+  font-family:var(--font-mono);font-size:11px;color:var(--dim);
+}
+.empty-state .es-title{font-size:13px;color:var(--muted);margin-bottom:.5rem;}
+.empty-state .es-hint{font-size:10px;color:var(--dim);margin-top:.25rem;line-height:1.7;}
+.empty-state code{color:var(--accent);}
+
+/* ── DETAIL ── */
+#detail{display:none;}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.back-btn{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;
+  color:var(--muted);cursor:pointer;background:none;border:none;padding:0;margin-bottom:1.25rem;
+  letter-spacing:.05em;transition:color .12s;
+}
+.back-btn:hover{color:var(--text);}
+.detail-hero{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:1.25rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;
+}
+.dname{font-size:24px;font-weight:600;letter-spacing:-.02em;margin-bottom:3px;}
+.dmeta{font-size:12px;color:var(--muted);}
+.dnif{font-family:var(--font-mono);font-size:10px;color:var(--dim);margin-top:3px;}
+.dscore{font-family:var(--font-mono);font-size:50px;font-weight:500;line-height:1;text-align:right;}
+.dslbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;text-align:right;margin-top:2px;}
+.detail-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ds{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:.9rem 1rem;}
+.ds-full{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:.9rem 1rem;margin-bottom:10px;}
+.ds-title{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:.85rem;}
+.src-row{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.src-name{font-size:11px;color:var(--muted);width:155px;flex-shrink:0;}
+.sbar{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.sbar-fill{height:100%;border-radius:2px;}
+.sscore{font-family:var(--font-mono);font-size:10px;color:var(--muted);width:30px;text-align:right;}
+#net-svg{width:100%;height:270px;}
+#chart-wrap{height:190px;position:relative;}
+.ct-table{width:100%;border-collapse:collapse;}
+.ct-table th{
+  font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);padding:0 8px 7px 0;text-align:left;border-bottom:1px solid var(--border);
+}
+.ct-table td{padding:7px 8px 7px 0;font-size:11px;color:var(--muted);border-bottom:1px solid rgba(37,37,53,.5);}
+.ct-table td:first-child{font-family:var(--font-mono);color:var(--text);font-size:10px;}
+.ct-flag{
+  font-size:9px;padding:1px 5px;border-radius:2px;
+  background:rgba(226,75,74,.13);color:#f08080;border:1px solid rgba(226,75,74,.2);
+}
+.ct-value{font-family:var(--font-mono);font-size:10px;}
+.ct-link{color:var(--accent);text-decoration:none;font-family:var(--font-mono);font-size:9px;}
+.ct-link:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PT<em>—</em>VIGIL</div>
+  <div class="hstats">
+    <span class="hstat"><b id="h-contratos">—</b> contratos</span>
+    <span class="hstat"><b id="h-entidades">—</b> entidades</span>
+    <span class="hstat-badge" id="alto-count">— alto risco</span>
+  </div>
+  <span id="source-lbl" style="font-family:var(--font-mono);font-size:9px;color:var(--dim);white-space:nowrap;">sem dados</span>
+</header>
+
+<!-- ── LOADER BAR ── -->
+<div id="loader-bar">
+  <span class="lb-label">FONTE:</span>
+
+  <!-- File loader -->
+  <button class="lbtn" onclick="document.getElementById('file-input').click()">📂 Carregar JSON (scraper)</button>
+  <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFile(event)">
+
+  <span class="lb-sep">|</span>
+
+  <!-- Live API search -->
+  <div class="live-wrap">
+    <input type="text" id="live-q" placeholder="entidade (ex: Câmara Municipal de Lisboa)">
+    <input type="number" id="live-ano" placeholder="ano" style="width:60px">
+    <button class="lbtn primary" onclick="fetchLive()">⚡ Vivo (base.gov.pt)</button>
+  </div>
+
+  <span class="lb-sep">|</span>
+  <button class="lbtn" onclick="loadDemo()">Demo</button>
+  <span id="status-msg"></span>
+  <div class="helper-note">Carrega um JSON gerado pelo pipeline ou usa o botão Demo para ver rapidamente como funciona.</div>
+</div>
+
+<!-- ── CORS HELP ── -->
+<div id="cors-help">
+  <span class="close-help" onclick="this.parentElement.style.display='none'">✕</span>
+  <b>CORS bloqueado pelo browser</b> — a API de base.gov.pt não permite chamadas directas do browser.<br>
+  Solução: corre o scraper Python e carrega o JSON exportado:<br><br>
+  <code>python pt_vigil_scraper.py --entidade "Câmara Municipal de Lisboa" --export json</code><br>
+  Depois usa o botão <b>Carregar JSON</b> para carregar o ficheiro <code>pt_vigil_export.json</code>.
+</div>
+
+<div class="layout">
+  <aside>
+    <div class="fg">
+      <div class="fg-title">Nível de Risco</div>
+      <div class="fo active" onclick="setRisk('all',this)"><span class="fdot" style="background:var(--dim)"></span>Todos<span class="fcount" id="fc-all">—</span></div>
+      <div class="fo" onclick="setRisk('alto',this)"><span class="fdot" style="background:var(--alto)"></span>Alto<span class="fcount" id="fc-alto">—</span></div>
+      <div class="fo" onclick="setRisk('medio',this)"><span class="fdot" style="background:var(--medio)"></span>Médio<span class="fcount" id="fc-medio">—</span></div>
+      <div class="fo" onclick="setRisk('baixo',this)"><span class="fdot" style="background:var(--baixo)"></span>Baixo<span class="fcount" id="fc-baixo">—</span></div>
+    </div>
+    <div class="fg">
+      <div class="fg-title">Tipo Procedimento</div>
+      <div class="fo active" onclick="setProc('all',this)"><span class="fdot" style="background:var(--dim)"></span>Todos</div>
+      <div class="fo" onclick="setProc('ajuste',this)"><span class="fdot" style="background:var(--alto)"></span>Ajuste Direto</div>
+      <div class="fo" onclick="setProc('concurso',this)"><span class="fdot" style="background:var(--baixo)"></span>Concurso Público</div>
+      <div class="fo" onclick="setProc('consulta',this)"><span class="fdot" style="background:var(--medio)"></span>Consulta Prévia</div>
+    </div>
+    <div class="fg">
+      <div class="fg-title">Filtrar por</div>
+      <select id="city-filter" class="sidebar-select" onchange="render()"><option value="">Todas as cidades</option></select>
+      <select id="entity-filter" class="sidebar-select" onchange="render()"><option value="">Todas as entidades</option></select>
+      <select id="nif-filter" class="sidebar-select" onchange="render()"><option value="">Todos os NIFs</option></select>
+      <button class="hbtn" style="width:100%;margin-top:8px" onclick="clearFilters()">Limpar filtros</button>
+    </div>
+    <div class="fg">
+      <div class="fg-title">Status Nacional</div>
+      <div class="source-item"><span class="src-dot"></span>Risco médio geral:<b id="avg-risk-all" style="margin-left:4px;color:var(--text);">—</b></div>
+      <div class="source-item"><span class="src-dot"></span>Risco médio filtrado:<b id="avg-risk-filter" style="margin-left:4px;color:var(--text);">—</b></div>
+    </div>
+    <div class="fg">
+      <div class="fg-title">Fontes Activas</div>
+      <div class="source-item src-active" id="src-base"><span class="src-dot"></span>base.gov.pt</div>
+      <div class="source-item" id="src-json"><span class="src-dot"></span>JSON local</div>
+    </div>
+    <div class="fg" style="margin-top:1.5rem">
+      <div class="fg-title">Exportar</div>
+      <div class="fo" onclick="exportCSV()" style="cursor:pointer"><span style="font-size:10px">⬇</span> CSV alto risco</div>
+      <div class="fo" onclick="exportJSON()" style="cursor:pointer"><span style="font-size:10px">⬇</span> JSON completo</div>
+    </div>
+  </aside>
+
+  <main>
+    <div id="grid-view">
+      <div class="main-hdr">
+        <span class="result-info" id="rinfo">aguarda dados...</span>
+        <select class="sort-sel" id="sorter" onchange="render()">
+          <option value="risk-desc">Risco ↓</option>
+          <option value="risk-asc">Risco ↑</option>
+          <option value="name">Nome A-Z</option>
+          <option value="value-desc">Valor ↓</option>
+          <option value="contracts-desc">Contratos ↓</option>
+        </select>
+      </div>
+      <div id="grid"></div>
+    </div>
+
+    <div id="detail">
+      <button class="back-btn" onclick="showGrid()">← voltar à lista</button>
+      <div id="detail-content"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════════════
+let DATA = [];
+let RAW_JSON = null;
+let riskFilter = 'all';
+let procFilter = 'all';
+let activeChart = null;
+
+// ═══════════════════════════════════════════════════════════════
+// MOTOR DE RISCO (port JS do scraper Python)
+// ═══════════════════════════════════════════════════════════════
+const PESOS = {
+  ajuste_direto: 20,
+  valor_elevado: 15,
+  adjudicacoes_repetidas: 15,
+  preco_anormal: 10,
+  sem_cpv: 5,
+  adj_concentrada: 15,
+  falta_dados: 10,
+};
+const LIMIAR_ALTO = 75000;
+const LIMIAR_MUITO_ALTO = 500000;
+
+function calcularScore(c, historico = {}) {
+  let score = 0;
+  const flags = [];
+  const preco = c.preco ?? c.initialContractualPrice ?? c.price ?? 0;
+  const precoEf = c.preco_efetivo ?? c.totalEffectivePrice ?? 0;
+  const tipoProc = (c.tipo_proc ?? c.procedureType ?? '').toLowerCase();
+  const cpv = String(c.cpv ?? c.cpvs ?? '');
+
+  if (tipoProc.includes('ajuste direto') || tipoProc.includes('ajuste directo')) {
+    score += PESOS.ajuste_direto;
+    flags.push('ajuste directo');
+  }
+  if (preco > LIMIAR_MUITO_ALTO) {
+    score += PESOS.valor_elevado;
+    flags.push('valor muito elevado (' + fmtVal(preco) + ')');
+  } else if (preco > LIMIAR_ALTO) {
+    score += PESOS.valor_elevado * 0.5;
+  }
+  if (preco > 0 && precoEf > 0) {
+    const delta = Math.abs(precoEf - preco) / preco;
+    if (delta > 0.3) { score += PESOS.preco_anormal; flags.push('desvio preço ' + Math.round(delta * 100) + '%'); }
+    else if (delta > 0.15) score += PESOS.preco_anormal * 0.5;
+  }
+  if (!cpv || cpv === '[]' || cpv === '') {
+    score += PESOS.sem_cpv;
+    flags.push('sem CPV');
+  }
+
+  const n = historico.n || 0;
+  const pct = historico.pct || 0;
+  if (n > 10) { score += PESOS.adjudicacoes_repetidas; flags.push('adjudicações repetidas (' + n + 'x)'); }
+  else if (n > 5) score += PESOS.adjudicacoes_repetidas * 0.5;
+  if (pct > 0.5) { score += PESOS.adj_concentrada; flags.push('concentração ' + Math.round(pct * 100) + '%'); }
+
+  return { score: Math.min(Math.round(score * 10) / 10, 100), flags };
+}
+
+function nivel(s) {
+  if (s >= 60) return 'alto';
+  if (s >= 35) return 'medio';
+  return 'baixo';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILITÁRIOS
+// ═══════════════════════════════════════════════════════════════
+function fmtVal(v) {
+  if (!v) return '—';
+  if (v >= 1000000) return (v / 1000000).toFixed(1).replace('.0', '') + 'M€';
+  if (v >= 1000) return Math.round(v / 1000) + 'k€';
+  return v + '€';
+}
+// alias para compatibilidade com restante código
+function fmt(v) { return fmtVal(v); }
+
+function showStatus(msg, cls = '') {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = cls;
+}
+
+function setSourceIndicators(hasFile, hasLive) {
+  document.getElementById('src-json').className = 'source-item' + (hasFile ? ' src-active' : '');
+  document.getElementById('src-base').className = 'source-item' + (hasLive ? ' src-active' : '');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRANSFORMAÇÃO: JSON DO SCRAPER → DATA
+// ═══════════════════════════════════════════════════════════════
+function transformScraperJSON(json) {
+  const contratos = json.contratos || [];
+  const entidadesRaw = json.entidades || [];
+
+  // Mapa base por NIF/nome
+  const entMap = {};
+
+  for (const e of entidadesRaw) {
+    const key = e.nif || e.nome || '__' + Math.random();
+    entMap[key] = {
+      _key: key,
+      nome: e.nome || '?',
+      nif: e.nif || '—',
+      risk: Number(e.score_risco) || 0,
+      contracts: Number(e.total_contratos) || 0,
+      value: Number(e.total_valor) || 0,
+      flags: [],
+      contratosList: [],
+    };
+  }
+
+  // Associar contratos às entidades (adjudicatária)
+  const totalValorPorAdj = {};
+  for (const c of contratos) {
+    const key = c.adj_nif || c.adjudicataria || '__' + Math.random();
+    if (!entMap[key]) {
+      entMap[key] = {
+        _key: key,
+        nome: c.adjudicataria || '?',
+        nif: c.adj_nif || '—',
+        risk: Number(c.score_risco) || 0,
+        contracts: 0,
+        value: 0,
+        flags: [],
+        contratosList: [],
+      };
+    }
+    entMap[key].contratosList.push(c);
+    totalValorPorAdj[key] = (totalValorPorAdj[key] || 0) + (Number(c.preco) || 0);
+
+    // Flags do contrato
+    let cf = [];
+    try { cf = JSON.parse(c.flags || '[]'); } catch (_) {}
+    for (const f of cf) {
+      if (!entMap[key].flags.includes(f)) entMap[key].flags.push(f);
+    }
+  }
+
+  // Calcular valor total por entidade adj (para concentração)
+  const totalPorAdjAdj = {};
+  for (const c of contratos) {
+    const eAdj = c.entidade_adj || '__';
+    const adj = c.adj_nif || c.adjudicataria || '__';
+    if (!totalPorAdjAdj[eAdj]) totalPorAdjAdj[eAdj] = {};
+    totalPorAdjAdj[eAdj][adj] = (totalPorAdjAdj[eAdj][adj] || 0) + (Number(c.preco) || 0);
+  }
+
+  let idxCounter = 1;
+
+  DATA = Object.values(entMap)
+    .filter(e => e.nome && e.nome !== '?')
+    .map(e => {
+      const cl = e.contratosList;
+
+      // Recalcular score se não vier da DB
+      let risk = e.risk;
+      if (!risk && cl.length) {
+        // Concentração: qual % do valor de cada adj_adj vai para esta empresa?
+        let maxPct = 0;
+        for (const c of cl) {
+          const eAdj = c.entidade_adj || '__';
+          const total = Object.values(totalPorAdjAdj[eAdj] || {}).reduce((s, v) => s + v, 0);
+          if (total > 0) {
+            const pct = (totalValorPorAdj[e._key] || 0) / total;
+            if (pct > maxPct) maxPct = pct;
+          }
+        }
+        const hist = { n: cl.length, pct: maxPct };
+        // Usar o contrato de maior risco para score base
+        const sorted = [...cl].sort((a, b) => (b.score_risco || 0) - (a.score_risco || 0));
+        if (sorted.length) {
+          const r = calcularScore(sorted[0], hist);
+          risk = r.score;
+          for (const f of r.flags) if (!e.flags.includes(f)) e.flags.push(f);
+        }
+      }
+
+      // Chart por ano
+      const byYear = {};
+      for (const c of cl) {
+        const dp = c.data_pub || c.data_contrato || '';
+        const yr = dp.slice(0, 4);
+        if (yr && yr.length === 4 && !isNaN(yr)) {
+          byYear[yr] = (byYear[yr] || 0) + (Number(c.preco) || 0);
+        }
+      }
+      const chart = Object.entries(byYear)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([y, v]) => ({ y, v }));
+
+      // Contratos sinalizados
+      const flagged = cl
+        .filter(c => (c.score_risco || 0) >= 25 || (c.ajuste_direto == 1))
+        .sort((a, b) => (b.score_risco || 0) - (a.score_risco || 0))
+        .slice(0, 15)
+        .map(c => {
+          let cf = [];
+          try { cf = JSON.parse(c.flags || '[]'); } catch (_) {}
+          return {
+            id: 'B' + (c.base_id || '?'),
+            entity: c.entidade_adj || '—',
+            value: Number(c.preco) || 0,
+            date: (c.data_pub || '').slice(0, 10) || '—',
+            flag: cf[0] || (c.ajuste_direto ? 'ajuste directo' : 'risco'),
+            src: 'base.gov.pt',
+            tipoProc: c.tipo_proc || '—',
+            objeto: c.objeto || '—',
+            baseId: c.base_id,
+          };
+        });
+
+      // Rede
+      const adjSet = {};
+      for (const c of cl.slice(0, 20)) {
+        const ea = c.entidade_adj;
+        if (ea && !adjSet[ea]) {
+          adjSet[ea] = { id: 'n_' + Object.keys(adjSet).length, label: ea, type: 'entidade' };
+        }
+      }
+      const net = Object.values(adjSet).slice(0, 6);
+
+      // Tipo proc predominante
+      const tiposMap = {};
+      for (const c of cl) {
+        const t = c.tipo_proc || '';
+        tiposMap[t] = (tiposMap[t] || 0) + 1;
+      }
+      const tipoPredom = Object.entries(tiposMap).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
+
+      // Sources
+      const sources = [
+        { n: 'base.gov.pt', s: Math.round(Math.min(risk, 100)) },
+      ];
+
+      return {
+        id: idxCounter++,
+        name: e.nome,
+        nif: e.nif,
+        risk: Math.round(Math.min(risk, 100)),
+        level: nivel(risk),
+        flags: e.flags.slice(0, 6),
+        contracts: e.contracts || cl.length,
+        value: e.value || cl.reduce((s, c) => s + (Number(c.preco) || 0), 0),
+        sources,
+        net,
+        chart: chart.length ? chart : [{ y: new Date().getFullYear().toString(), v: e.value || 0 }],
+        flagged,
+        tipoPredom,
+        district: cl[0]?.distrito || '—',
+        tiposProc: Object.keys(tiposMap),
+      };
+    })
+    .filter(e => e.name);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CARREGAR FICHEIRO JSON
+// ═══════════════════════════════════════════════════════════════
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showStatus('A carregar ' + file.name + '…', 'loading');
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const json = JSON.parse(e.target.result);
+      RAW_JSON = json;
+      transformScraperJSON(json);
+      updateUIFromData(json, true, false);
+      showStatus('✓ ' + file.name + ' carregado (' + (json.total_contratos || DATA.length) + ' contratos)', 'ok');
+    } catch (err) {
+      showStatus('Erro a ler JSON: ' + err.message, 'err');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PESQUISA AO VIVO: base.gov.pt
+// ═══════════════════════════════════════════════════════════════
+async function fetchLive() {
+  const entidade = document.getElementById('live-q').value.trim();
+  const ano = document.getElementById('live-ano').value.trim();
+  if (!entidade) {
+    showStatus('Escreve o nome da entidade', 'err');
+    return;
+  }
+  document.getElementById('cors-help').style.display = 'none';
+  showStatus('A consultar base.gov.pt…', 'loading');
+
+  const params = new URLSearchParams({
+    type: 'search_contratos',
+    query: '',
+    baseType: 'contratoSearch',
+    entidade: entidade,
+    adjudicataria: '',
+    tipoContrato: '',
+    cpv: '',
+    tipoProcedimento: '',
+    page: 1,
+    pageSize: 50,
+  });
+  if (ano) params.set('anoContrato', ano);
+
+  try {
+    const r = await fetch('https://www.base.gov.pt/Base4/pt/resultados/?' + params.toString(), {
+      headers: {
+        Accept: 'application/json, text/javascript, */*',
+        Referer: 'https://www.base.gov.pt/Base4/pt/pesquisa/',
+      },
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const items = data.list || [];
+    if (!items.length) { showStatus('Nenhum contrato encontrado', 'err'); return; }
+
+    // Mapear para formato interno + calcular score
+    const contratos = items.map(c => {
+      const sc = calcularScore(c);
+      return {
+        base_id: c.id,
+        objeto: c.description || c.object || '',
+        entidade_adj: c.contractingDesignation || c.contracting || entidade,
+        adjudicataria: c.adjudicatairaNome || c.awarded || '',
+        adj_nif: c.awardedNif || c.nif || '',
+        tipo_proc: c.procedureType || '',
+        preco: c.initialContractualPrice || c.price || 0,
+        preco_efetivo: c.totalEffectivePrice || 0,
+        data_pub: c.publicationDate || '',
+        cpv: String(c.cpvs || ''),
+        distrito: c.executionPlace || '',
+        ajuste_direto: (c.procedureType || '').toLowerCase().includes('ajuste') ? 1 : 0,
+        score_risco: sc.score,
+        flags: JSON.stringify(sc.flags),
+      };
+    });
+
+    const json = {
+      gerado: new Date().toISOString(),
+      total_contratos: contratos.length,
+      entidades: [],
+      contratos,
+    };
+    transformScraperJSON(json);
+    updateUIFromData(json, false, true);
+    showStatus('✓ ' + contratos.length + ' contratos de "' + entidade + '"', 'ok');
+  } catch (err) {
+    if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('CORS')) {
+      document.getElementById('cors-help').style.display = 'block';
+      showStatus('CORS bloqueado — ver instruções abaixo', 'err');
+    } else {
+      showStatus('Erro: ' + err.message, 'err');
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DADOS DEMO
+// ═══════════════════════════════════════════════════════════════
+function loadDemo() {
+  const demoContratos = [
+    { base_id:10001, objeto:'Empreitada requalificação escola primária', entidade_adj:'Câmara Municipal de Sintra', adjudicataria:'Construções Ferreira & Filhos Lda.', adj_nif:'500123456', tipo_proc:'Ajuste Direto Simplificado', preco:68000, preco_efetivo:82000, data_pub:'2023-03-15', cpv:'45214200-2', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10002, objeto:'Fornecimento equipamento informático', entidade_adj:'Câmara Municipal de Sintra', adjudicataria:'TechSolutions Portugal SA', adj_nif:'507654321', tipo_proc:'Ajuste Direto Simplificado', preco:45000, preco_efetivo:45000, data_pub:'2023-06-01', cpv:'30213000-5', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10003, objeto:'Consultoria gestão resíduos urbanos', entidade_adj:'Câmara Municipal de Sintra', adjudicataria:'EcoConsult Lda.', adj_nif:'509111222', tipo_proc:'Ajuste Direto Simplificado', preco:92000, preco_efetivo:115000, data_pub:'2023-01-20', cpv:'90700000-4', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10004, objeto:'Construção pavilhão desportivo municipal', entidade_adj:'Câmara Municipal de Cascais', adjudicataria:'Construções Ferreira & Filhos Lda.', adj_nif:'500123456', tipo_proc:'Ajuste Direto Simplificado', preco:580000, preco_efetivo:610000, data_pub:'2022-09-10', cpv:'45212220-4', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10005, objeto:'Aquisição viaturas serviços municipais', entidade_adj:'Câmara Municipal de Cascais', adjudicataria:'AutoMercado Nacional SA', adj_nif:'502987654', tipo_proc:'Concurso Público', preco:350000, preco_efetivo:342000, data_pub:'2022-11-25', cpv:'34110000-1', distrito:'Lisboa', ajuste_direto:0, score_risco:0, flags:'[]' },
+    { base_id:10006, objeto:'Obras manutenção estradas municipais', entidade_adj:'Município de Oeiras', adjudicataria:'Obras Públicas Norte Lda.', adj_nif:'506543210', tipo_proc:'Ajuste Direto', preco:125000, preco_efetivo:190000, data_pub:'2023-07-03', cpv:'45233141-9', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10007, objeto:'Serviços limpeza edifícios públicos', entidade_adj:'Município de Oeiras', adjudicataria:'CleanPro Serviços SA', adj_nif:'505678901', tipo_proc:'Concurso Público', preco:240000, preco_efetivo:235000, data_pub:'2023-02-14', cpv:'90910000-9', distrito:'Lisboa', ajuste_direto:0, score_risco:0, flags:'[]' },
+    { base_id:10008, objeto:'Reabilitação jardins históricos', entidade_adj:'Município de Oeiras', adjudicataria:'Jardins & Paisagem Lda.', adj_nif:'508234567', tipo_proc:'Consulta Prévia', preco:62000, preco_efetivo:62000, data_pub:'2023-04-22', cpv:'77300000-3', distrito:'Lisboa', ajuste_direto:0, score_risco:0, flags:'[]' },
+    { base_id:10009, objeto:'Sistema videovigilância praça central', entidade_adj:'Câmara Municipal de Sintra', adjudicataria:'TechSolutions Portugal SA', adj_nif:'507654321', tipo_proc:'Ajuste Direto Simplificado', preco:55000, preco_efetivo:55000, data_pub:'2022-12-05', cpv:'35125300-2', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10010, objeto:'Auditoria financeira serviços municipais', entidade_adj:'Câmara Municipal de Cascais', adjudicataria:'Deloitte Portugal SA', adj_nif:'502345678', tipo_proc:'Ajuste Direto Simplificado', preco:78000, preco_efetivo:78000, data_pub:'2023-08-16', cpv:'79212100-4', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+    { base_id:10011, objeto:'Obras ampliação centro de saúde', entidade_adj:'ARSLVT — Adm. Regional Saúde Lisboa', adjudicataria:'Construções Ferreira & Filhos Lda.', adj_nif:'500123456', tipo_proc:'Negociação', preco:820000, preco_efetivo:960000, data_pub:'2022-05-18', cpv:'45215140-0', distrito:'Lisboa', ajuste_direto:0, score_risco:0, flags:'[]' },
+    { base_id:10012, objeto:'Fornecimento material médico consumível', entidade_adj:'ARSLVT — Adm. Regional Saúde Lisboa', adjudicataria:'MedSupply Portugal Lda.', adj_nif:'501234567', tipo_proc:'Ajuste Direto Simplificado', preco:38000, preco_efetivo:38000, data_pub:'2023-09-01', cpv:'33140000-3', distrito:'Lisboa', ajuste_direto:1, score_risco:0, flags:'[]' },
+  ];
+
+  const json = {
+    gerado: new Date().toISOString(),
+    total_contratos: demoContratos.length,
+    entidades: [],
+    contratos: demoContratos,
+  };
+  transformScraperJSON(json);
+  updateUIFromData(json, false, false);
+  showStatus('✓ Dados demo carregados (' + demoContratos.length + ' contratos sintéticos)', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ACTUALIZAR UI
+// ═══════════════════════════════════════════════════════════════
+function updateUIFromData(json, isFile, isLive) {
+  const total = json.total_contratos || DATA.reduce((s, e) => s + e.contracts, 0);
+  document.getElementById('h-contratos').textContent = total.toLocaleString('pt');
+  document.getElementById('h-entidades').textContent = DATA.length.toLocaleString('pt');
+  const altos = DATA.filter(e => e.level === 'alto').length;
+  document.getElementById('alto-count').textContent = altos + ' em alto risco';
+  document.getElementById('fc-all').textContent = DATA.length;
+  document.getElementById('fc-alto').textContent = DATA.filter(e => e.level === 'alto').length;
+  document.getElementById('fc-medio').textContent = DATA.filter(e => e.level === 'medio').length;
+  document.getElementById('fc-baixo').textContent = DATA.filter(e => e.level === 'baixo').length;
+
+  const gerado = json.gerado ? new Date(json.gerado).toLocaleDateString('pt-PT') : '—';
+  const lbl = isFile ? 'JSON local · ' + gerado : isLive ? 'base.gov.pt ao vivo · ' + new Date().toLocaleDateString('pt-PT') : 'demo · ' + gerado;
+  document.getElementById('source-lbl').textContent = lbl;
+
+  populateFilters();
+  setSourceIndicators(isFile, isLive);
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILTROS E RENDER
+// ═══════════════════════════════════════════════════════════════
+function setRisk(val, el) {
+  riskFilter = val;
+  document.querySelectorAll('[onclick^="setRisk"]').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function setProc(val, el) {
+  procFilter = val;
+  document.querySelectorAll('[onclick^="setProc"]').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function populateFilters() {
+  const citySelect = document.getElementById('city-filter');
+  const entitySelect = document.getElementById('entity-filter');
+  const nifSelect = document.getElementById('nif-filter');
+  if (!citySelect || !entitySelect || !nifSelect) return;
+
+  const cities = [...new Set(DATA.map(e => (e.district || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt'));
+  const entities = [...new Set(DATA.map(e => (e.name || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt'));
+  const nifs = [...new Set(DATA.map(e => (e.nif || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt'));
+
+  const fillSelect = (select, items, label) => {
+    select.innerHTML = '';
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = label;
+    select.appendChild(opt);
+    items.forEach(item => {
+      const o = document.createElement('option');
+      o.value = item;
+      o.textContent = item;
+      select.appendChild(o);
+    });
+  };
+
+  fillSelect(citySelect, cities, 'Todas as cidades');
+  fillSelect(entitySelect, entities, 'Todas as entidades');
+  fillSelect(nifSelect, nifs, 'Todos os NIFs');
+}
+
+function clearFilters() {
+  document.getElementById('city-filter').value = '';
+  document.getElementById('entity-filter').value = '';
+  document.getElementById('nif-filter').value = '';
+  render();
+}
+
+function filtered() {
+  const cityVal = (document.getElementById('city-filter')?.value || '').trim().toLowerCase();
+  const entityVal = (document.getElementById('entity-filter')?.value || '').trim().toLowerCase();
+  const nifVal = (document.getElementById('nif-filter')?.value || '').trim().toLowerCase();
+  const sort = document.getElementById('sorter').value;
+
+  let arr = DATA.filter(e => {
+    if (riskFilter !== 'all' && e.level !== riskFilter) return false;
+    if (procFilter !== 'all') {
+      const tp = (e.tiposProc || []).join(' ').toLowerCase();
+      if (procFilter === 'ajuste' && !tp.includes('ajuste')) return false;
+      if (procFilter === 'concurso' && !tp.includes('concurso')) return false;
+      if (procFilter === 'consulta' && !tp.includes('consulta')) return false;
+    }
+    if (cityVal && !((e.district || '').toLowerCase().includes(cityVal))) return false;
+    if (entityVal && !((e.name || '').toLowerCase().includes(entityVal))) return false;
+    if (nifVal && ((e.nif || '').toLowerCase() !== nifVal)) return false;
+    return true;
+  });
+
+  if (sort === 'risk-desc') arr.sort((a, b) => b.risk - a.risk);
+  else if (sort === 'risk-asc') arr.sort((a, b) => a.risk - b.risk);
+  else if (sort === 'name') arr.sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+  else if (sort === 'value-desc') arr.sort((a, b) => b.value - a.value);
+  else if (sort === 'contracts-desc') arr.sort((a, b) => b.contracts - a.contracts);
+
+  return arr;
+}
+
+function render() {
+  const arr = filtered();
+  const g = document.getElementById('grid');
+  const avgAll = DATA.length ? (DATA.reduce((s, e) => s + e.risk, 0) / DATA.length).toFixed(1) : '—';
+  const avgFilter = arr.length ? (arr.reduce((s, e) => s + e.risk, 0) / arr.length).toFixed(1) : '—';
+  document.getElementById('avg-risk-all').textContent = avgAll;
+  document.getElementById('avg-risk-filter').textContent = avgFilter;
+
+  if (!DATA.length) {
+    document.getElementById('rinfo').textContent = 'sem dados carregados';
+    g.innerHTML = `
+      <div class="empty-state">
+        <div class="es-title">Sem dados</div>
+        <div class="es-hint">
+          1. Corre o scraper: <code>python pt_vigil_scraper.py --entidade "Câmara Municipal de Lisboa" --export json</code><br>
+          2. Carrega <code>pt_vigil_export.json</code> com o botão <b>Carregar JSON</b><br>
+          — ou —<br>
+          Usa a pesquisa ao vivo diretamente em <b>base.gov.pt</b><br>
+          — ou —<br>
+          Clica em <b>Demo</b> para dados sintéticos de exemplo
+        </div>
+      </div>`;
+    return;
+  }
+
+  const cityVal = (document.getElementById('city-filter')?.value || '').trim();
+  const entityVal = (document.getElementById('entity-filter')?.value || '').trim();
+  const nifVal = (document.getElementById('nif-filter')?.value || '').trim();
+  const filters = [];
+  if (cityVal) filters.push('cidade: ' + cityVal);
+  if (entityVal) filters.push('entidade: ' + entityVal);
+  if (nifVal) filters.push('NIF: ' + nifVal);
+  const filterLabel = filters.length ? ' — ' + filters.join(' | ') : '';
+  document.getElementById('rinfo').textContent = arr.length + ' entidade' + (arr.length !== 1 ? 's' : '') + ' encontrada' + (arr.length !== 1 ? 's' : '') + filterLabel;
+
+  if (!arr.length) {
+    g.innerHTML = '<div class="no-r">nenhum resultado</div>';
+    return;
+  }
+
+  g.innerHTML = arr.map(e => `
+    <div class="card ${e.level}" onclick="showDetail(${e.id})">
+      <div class="card-top">
+        <div style="min-width:0;flex:1">
+          <div class="pol-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.name}">${e.name}</div>
+          <div class="pol-sub">${e.tipoPredom} · ${e.district}</div>
+        </div>
+        <div style="flex-shrink:0;margin-left:8px">
+          <div class="risk-score score ${e.level}">${e.risk}</div>
+          <div class="risk-lbl lbl ${e.level}">corrupção ${e.level}</div>
+        </div>
+      </div>
+      <div class="rbar"><div class="rbar-fill ${e.level}" style="width:${e.risk}%"></div></div>
+      <div class="cstats">
+        <div class="cs"><div class="cs-l">CONTRATOS</div><div class="cs-v">${e.contracts}</div></div>
+        <div class="cs"><div class="cs-l">VALOR</div><div class="cs-v">${fmt(e.value)}</div></div>
+        <div class="cs"><div class="cs-l">FLAGS</div><div class="cs-v">${e.flags.length}</div></div>
+      </div>
+      ${e.flags.length ? `<div class="tags">${e.flags.slice(0, 3).map(f => `<span class="tag ${e.level}">${f}</span>`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DETAIL VIEW
+// ═══════════════════════════════════════════════════════════════
+function showGrid() {
+  document.getElementById('grid-view').style.display = '';
+  document.getElementById('detail').style.display = 'none';
+  if (activeChart) { activeChart.destroy(); activeChart = null; }
+}
+
+function showDetail(id) {
+  const e = DATA.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('grid-view').style.display = 'none';
+  const dv = document.getElementById('detail');
+  dv.style.display = 'block';
+  dv.style.animation = 'slideIn .2s ease';
+
+  const srcBars = e.sources.map(s => {
+    const c = s.s >= 70 ? 'var(--alto)' : s.s >= 45 ? 'var(--medio)' : 'var(--baixo)';
+    return `<div class="src-row">
+      <span class="src-name">${s.n}</span>
+      <div class="sbar"><div class="sbar-fill" style="width:${s.s}%;background:${c}"></div></div>
+      <span class="sscore">${s.s}%</span>
+    </div>`;
+  }).join('');
+
+  // Indicadores de risco
+  const riskBreakdown = [
+    { k: 'Ajuste Direto', v: e.flags.includes('ajuste directo') ? 20 : 0, w: 20 },
+    { k: 'Valor Elevado', v: e.value > 500000 ? 15 : e.value > 75000 ? 8 : 0, w: 15 },
+    { k: 'Adj. Repetidas', v: e.contracts > 10 ? 15 : e.contracts > 5 ? 8 : 0, w: 15 },
+    { k: 'Conc. Adjudicação', v: e.flags.some(f => f.includes('concentração')) ? 15 : 0, w: 15 },
+    { k: 'Desvio Preço', v: e.flags.some(f => f.includes('desvio')) ? 10 : 0, w: 10 },
+    { k: 'Sem CPV', v: e.flags.includes('sem CPV') ? 5 : 0, w: 5 },
+  ].filter(x => x.w > 0);
+
+  const riskBars = riskBreakdown.map(x => {
+    const pct = x.w > 0 ? Math.round((x.v / x.w) * 100) : 0;
+    const c = pct >= 70 ? 'var(--alto)' : pct >= 40 ? 'var(--medio)' : 'var(--baixo)';
+    return `<div class="src-row">
+      <span class="src-name">${x.k}</span>
+      <div class="sbar"><div class="sbar-fill" style="width:${pct}%;background:${c}"></div></div>
+      <span class="sscore">${x.v}/${x.w}</span>
+    </div>`;
+  }).join('');
+
+  const flaggedRows = e.flagged.length ? e.flagged.map(c => {
+    const link = c.baseId
+      ? `<a class="ct-link" href="https://www.base.gov.pt/Base4/pt/detalhe/?type=contratos&id=${c.baseId}" target="_blank">↗</a>`
+      : '';
+    return `<tr>
+      <td>${c.id} ${link}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.objeto}">${c.objeto || c.entity}</td>
+      <td>${c.entity}</td>
+      <td class="ct-value">${fmt(c.value)}</td>
+      <td>${c.date}</td>
+      <td><span class="ct-flag">${c.flag}</span></td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="6" style="color:var(--dim);font-family:var(--font-mono);font-size:10px;padding:1rem 0">nenhum contrato sinalizado</td></tr>`;
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-hero">
+      <div style="min-width:0;flex:1">
+        <div class="dname" style="font-size:20px">${e.name}</div>
+        <div class="dmeta">${e.tipoPredom} · ${e.district}</div>
+        <div class="dnif">NIF ${e.nif} · ${e.contracts} contratos · ${fmt(e.value)} total</div>
+      </div>
+      <div>
+        <div class="dscore ${e.level}">${e.risk}</div>
+        <div class="dslbl lbl ${e.level}">status corrupção ${e.level}</div>
+      </div>
+    </div>
+    <div class="detail-2col">
+      <div class="ds">
+        <div class="ds-title">Rede de Entidades Adjudicantes</div>
+        <svg id="net-svg"></svg>
+      </div>
+      <div class="ds">
+        <div class="ds-title">Decomposição do Score</div>
+        ${riskBars || srcBars}
+      </div>
+    </div>
+    <div class="ds-full">
+      <div class="ds-title">Valor Adjudicado por Ano (€)</div>
+      <div id="chart-wrap"><canvas id="contracts-chart"></canvas></div>
+    </div>
+    <div class="ds-full">
+      <div class="ds-title">Contratos Sinalizados
+        <span style="color:var(--dim);margin-left:8px">base.gov.pt</span>
+        ${e.flagged.length ? '<span style="float:right;cursor:pointer;color:var(--accent)" onclick="downloadContratos(' + e.id + ')">⬇ CSV</span>' : ''}
+      </div>
+      <table class="ct-table">
+        <thead><tr><th>ID</th><th>Objeto</th><th>Entidade Adj.</th><th>Valor</th><th>Data</th><th>Motivo</th></tr></thead>
+        <tbody>${flaggedRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  drawNetwork(e);
+  drawChart(e);
+}
+
+function drawNetwork(e) {
+  const svg = d3.select('#net-svg');
+  const W = document.getElementById('net-svg').clientWidth || 340;
+  const H = 270;
+  svg.attr('viewBox', '0 0 ' + W + ' ' + H);
+  svg.selectAll('*').remove();
+
+  const nodes = [
+    { id: 'main', label: e.name.split(' ').slice(0, 2).join(' '), type: 'adj', x: W / 2, y: H / 2, fixed: true },
+    ...e.net.map(n => ({ ...n }))
+  ];
+  const links = e.net.map(n => ({ source: 'main', target: n.id }));
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(85))
+    .force('charge', d3.forceManyBody().strength(-110))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide(32));
+
+  const linkEl = svg.append('g').selectAll('line').data(links).join('line')
+    .attr('stroke', '#2a2a3a').attr('stroke-width', 1);
+
+  const typeColor = { adj: '#e24b4a', entidade: '#5585f0', empresa: '#5aab38' };
+
+  const node = svg.append('g').selectAll('g').data(nodes).join('g').attr('cursor', 'default');
+
+  node.append('circle')
+    .attr('r', d => d.type === 'adj' ? 18 : 13)
+    .attr('fill', d => typeColor[d.type] || '#5585f0')
+    .attr('fill-opacity', .2)
+    .attr('stroke', d => typeColor[d.type] || '#5585f0')
+    .attr('stroke-width', 1.5);
+
+  node.append('text')
+    .attr('text-anchor', 'middle').attr('dy', '0.35em')
+    .attr('font-family', 'IBM Plex Mono,monospace').attr('font-size', '7')
+    .attr('fill', d => typeColor[d.type] || '#5585f0')
+    .text(d => {
+      const l = d.label || '';
+      return l.length > 12 ? l.substring(0, 12) + '…' : l;
+    });
+
+  node.append('text')
+    .attr('text-anchor', 'middle').attr('dy', '26').attr('y', 0)
+    .attr('font-family', 'IBM Plex Mono,monospace').attr('font-size', '7')
+    .attr('fill', '#44445a').text(d => d.type !== 'adj' ? 'adj' : 'adjudicatária');
+
+  sim.on('tick', () => {
+    linkEl.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('transform', d => 'translate(' + Math.max(20, Math.min(W - 20, d.x)) + ',' + Math.max(20, Math.min(H - 20, d.y)) + ')');
+  });
+}
+
+function drawChart(e) {
+  if (activeChart) { activeChart.destroy(); activeChart = null; }
+  const ctx = document.getElementById('contracts-chart').getContext('2d');
+  const maxV = Math.max(...e.chart.map(c => c.v));
+  activeChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: e.chart.map(c => c.y),
+      datasets: [{
+        data: e.chart.map(c => c.v),
+        backgroundColor: e.chart.map(c => c.v === maxV ? 'rgba(226,75,74,.5)' : 'rgba(85,133,240,.3)'),
+        borderColor: e.chart.map(c => c.v === maxV ? '#e24b4a' : '#5585f0'),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => fmt(ctx.raw) },
+          backgroundColor: '#1c1c26', borderColor: '#252535', borderWidth: 1,
+          titleColor: '#7a7a90', bodyColor: '#e2e2ee',
+          titleFont: { family: 'IBM Plex Mono', size: 10 },
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#44445a', font: { family: 'IBM Plex Mono', size: 10 } }, grid: { color: 'rgba(37,37,53,.6)' }, border: { color: '#252535' } },
+        y: { ticks: { color: '#44445a', font: { family: 'IBM Plex Mono', size: 9 }, callback: v => fmt(v) }, grid: { color: 'rgba(37,37,53,.6)' }, border: { color: '#252535' } },
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORTAÇÃO
+// ═══════════════════════════════════════════════════════════════
+function downloadContratos(id) {
+  const e = DATA.find(x => x.id === id);
+  if (!e) return;
+  const rows = [['ID', 'Objeto', 'Entidade Adjudicante', 'Valor', 'Data', 'Motivo']];
+  for (const c of e.flagged) rows.push([c.id, c.objeto || c.entity, c.entity, c.value, c.date, c.flag]);
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  triggerDownload(csv, e.name.replace(/\s+/g, '_') + '_contratos.csv', 'text/csv');
+}
+
+function exportCSV() {
+  const altos = DATA.filter(e => e.level === 'alto');
+  if (!altos.length) { showStatus('Sem entidades de alto risco', 'err'); return; }
+  const rows = [['Nome', 'NIF', 'Score Risco', 'Nível', 'Contratos', 'Valor Total', 'Flags', 'Tipo Proc', 'Distrito']];
+  for (const e of altos) {
+    rows.push([e.name, e.nif, e.risk, e.level, e.contracts, e.value, e.flags.join('; '), e.tipoPredom, e.district]);
+  }
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  triggerDownload(csv, 'pt_vigil_alto_risco.csv', 'text/csv');
+  showStatus('✓ CSV exportado (' + altos.length + ' entidades)', 'ok');
+}
+
+function exportJSON() {
+  if (!DATA.length) { showStatus('Sem dados para exportar', 'err'); return; }
+  const out = JSON.stringify({ gerado: new Date().toISOString(), entidades: DATA }, null, 2);
+  triggerDownload(out, 'pt_vigil_export_ui.json', 'application/json');
+  showStatus('✓ JSON exportado', 'ok');
+}
+
+function triggerDownload(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = filename;
+  a.click();
+}
+
+// ── Enter key on live search ──
+document.getElementById('live-q').addEventListener('keydown', e => { if (e.key === 'Enter') fetchLive(); });
+
+// Render inicial (vazio)
+render();
+</script>
+</body>
+</html>
